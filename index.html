@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TATU - Ma'naviy-ma'rifiy faoliyat monitoringi va Avto-Bayonnoma tizimi</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- html2pdf.js for exporting perfect A4 PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Print styling specifically for A4 Protocol Document */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #protocol-print-container, #protocol-print-container * {
+        visibility: visible;
+      }
+      #protocol-print-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20mm 15mm;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .a4-sheet {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 25mm 20mm 20mm 25mm;
+      position: relative;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+
+  <!-- 1. YAXLIT OYNA: UNIVERSITET RAHBARIYATI VA TIZIMGA KIRISH PORTALI -->
+  <div id="app-portal-screen" class="min-h-screen bg-slate-100/90 bg-gradient-to-br from-slate-100 via-blue-50/30 to-indigo-50/30 flex flex-col">
+    
+    <!-- TOP NAVIGATION BAR (O'NG TOMONIDA QULFLI KIRISH TUGMASI BILAN) -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+          
+          <!-- Left: Logo & University Title -->
+          <div class="flex items-center space-x-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-blue-700 flex items-center justify-center text-white shadow-md shadow-blue-600/25">
+              <i data-lucide="award" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <div class="inline-flex items-center space-x-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-700 mb-0.5">
+                <span>TATU Ma'naviyat & Avto-Bayonnoma</span>
+              </div>
+              <h1 class="text-sm sm:text-base font-bold text-slate-900 leading-tight">
+                Muhammad al-Xorazmiy nomidagi Toshkent axborot texnologiyalari universiteti
+              </h1>
+            </div>
+          </div>
+
+          <!-- Right: Tizimga kirish (Lock) tugmasi -->
+          <div>
+            <button onclick="openLoginModal()" class="inline-flex items-center space-x-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-md shadow-blue-500/25 transition">
+              <i data-lucide="lock" class="w-4 h-4 text-blue-200"></i>
+              <span>Tizimga kirish</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY: UNIVERSITET RAHBARIYATI TO'LIQ SHAKLI (1 TA KATTA OYNA) -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+      
+      <!-- Ministry Banner & Introduction -->
+      <div class="text-center max-w-3xl mx-auto space-y-2">
+        <div class="inline-flex items-center space-x-2 bg-blue-100/80 border border-blue-200 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+          <i data-lucide="landmark" class="w-3.5 h-3.5"></i>
+          <span>O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          Ma'naviy-ma'rifiy faoliyatga mas'ul universitet rahbariyati
+        </h2>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Tadbirlar monitoringi, talabalar tarbiyasi va rasmiy bayonnomalarni yurituvchi rektorat va fakultet dekan muovinlari tarkibi
+        </p>
+      </div>
+
+      <!-- 1. BOSH RAHBARIYAT (REKTOR VA BIRINCHI PROREKTOR) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Rektor: Maxkamov Baxtiyor Shuxratovich -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md hover:shadow-lg transition flex flex-col sm:flex-row items-center sm:items-start gap-5 relative overflow-hidden">
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-blue-600"></div>
+          <img src="images/maxkamov.jpg" 
+               alt="Maxkamov Baxtiyor Shuxratovich" 
+               class="w-28 h-36 rounded-2xl object-cover shadow-sm border-2 border-white shrink-0"
+               onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Baxtiyor+Maxkamov&background=1e40af&color=fff&size=128';">
+          <div class="flex-1 text-center sm:text-left space-y-1">
+            <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow-xs">
+              Universitet Rektori
+            </span>
+            <h3 class="text-lg font-bold text-slate-900">Maxkamov Baxtiyor Shuxratovich</h3>
+            <p class="text-xs text-blue-700 font-semibold">Iqtisodiyot fanlari doktori, professor</p>
+            <p class="text-xs text-slate-500 pt-1 leading-relaxed">
+              Universitetning barcha ma'naviy-ma'rifiy, tarbiyaviy va ilmiy strategik faoliyati rahbari.
+            </p>
+          </div>
+        </div>
+
+        <!-- Birinchi Prorektor: Yaxshibayev Doniyor Sultonbayevich -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md hover:shadow-lg transition flex flex-col sm:flex-row items-center sm:items-start gap-5 relative overflow-hidden">
+          <div class="absolute top-0 left-0 right-0 h-1.5 bg-emerald-600"></div>
+          <img src="images/yaxshibayev.png" 
+               alt="Yaxshibayev Doniyor Sultonbayevich" 
+               class="w-28 h-36 rounded-2xl object-cover shadow-sm border-2 border-white shrink-0"
+               onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Doniyor+Yaxshibayev&background=047857&color=fff&size=128';">
+          <div class="flex-1 text-center sm:text-left space-y-1">
+            <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-600 text-white shadow-xs">
+              Birinchi Prorektor
+            </span>
+            <h3 class="text-lg font-bold text-slate-900">Yaxshibayev Doniyor Sultonbayevich</h3>
+            <p class="text-xs text-emerald-700 font-semibold">Yoshlar masalalari va ma’naviy-ma’rifiy ishlar bo‘yicha, dotsent</p>
+            <p class="text-xs text-slate-500 pt-1 leading-relaxed">
+              Universitet miqyosidagi barcha ma'naviy tadbirlar, rasmiy bayonnomalar monitoringi va tyutorlar bosh koordinatori.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. FAKULTETLAR BO'YICHA DEKAN MUOVINLARI (8 TA FAKULTET - 4 USTUNLI CHROYLI GRID) -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="graduation-cap" class="w-5 h-5 text-blue-600"></i>
+            <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide">
+              Fakultet dekan muovinlari (Yoshlar bilan ishlash bo'yicha)
+            </h3>
+          </div>
+          <span class="text-xs font-bold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
+            8 ta fakultet mas'uli
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+          <!-- 1. Kompyuter injiniringi -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-blue-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/karimov.png" 
+                   alt="Karimov Abdulatif Botirovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Abdulatif+Karimov&background=1e40af&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 mb-1">
+                Kompyuter injiniringi
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Karimov Abdulatif Botirovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan muovini
+            </p>
+          </div>
+
+          <!-- 2. Dasturiy injiniring -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-indigo-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/shirinov.png" 
+                   alt="Shirinov Laziz Toxirovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Laziz+Shirinov&background=4338ca&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-100 mb-1">
+                Dasturiy injiniring
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Shirinov Laziz Toxirovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan o‘rinbosari
+            </p>
+          </div>
+
+          <!-- 3. Kiberxavfsizlik -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-emerald-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/berdiboyev.png" 
+                   alt="Berdiboyev Oltinboy Abdiboqi o‘g‘li" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Oltinboy+Berdiboyev&background=047857&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100 mb-1">
+                Kiberxavfsizlik
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Berdiboyev Oltinboy Abdiboqi</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan muovini
+            </p>
+          </div>
+
+          <!-- 4. Telekommunikatsiya -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-cyan-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/ochilov.png" 
+                   alt="Ochilov Laziz Siddiqovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Laziz+Ochilov&background=0891b2&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-100 mb-1">
+                Telekommunikatsiya
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Ochilov Laziz Siddiqovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan muovini
+            </p>
+          </div>
+
+          <!-- 5. Radio va mobil aloqa -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-sky-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/badalov.png" 
+                   alt="Badalov Jasur Ismailovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Jasur+Badalov&background=3b82f6&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-100 mb-1">
+                Radio va mobil aloqa
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Badalov Jasur Ismailovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan muovini
+            </p>
+          </div>
+
+          <!-- 6. Iqtisodiyot va menejment -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-purple-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/zaripov.png" 
+                   alt="Zaripov Alisher Muxammatovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alisher+Zaripov&background=8b5cf6&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-100 mb-1">
+                Iqtisodiyot va menejment
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Zaripov Alisher Muxammatovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar masalalari dekan muovini
+            </p>
+          </div>
+
+          <!-- 7. AKT sohasida kasb ta'limi -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-amber-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/norbekov.png" 
+                   alt="Norbekov Suhrob Farhod o‘g‘li" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Suhrob+Norbekov&background=f59e0b&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100 mb-1">
+                AKT kasb ta'limi
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Norbekov Suhrob Farhod o‘g‘li</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar bilan ishlash dekan muovini
+            </p>
+          </div>
+
+          <!-- 8. Televizion texnologiyalar -->
+          <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs hover:shadow-md hover:border-teal-300 transition flex flex-col justify-between">
+            <div class="text-center">
+              <img src="images/muminov.png" 
+                   alt="Mo‘minov Sanjar Sailqulovich" 
+                   class="w-24 h-28 mx-auto rounded-xl object-cover shadow-xs border border-slate-200 mb-3"
+                   onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sanjar+Muminov&background=0d9488&color=fff&size=128';">
+              <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-100 mb-1">
+                Televizion texnologiyalar
+              </span>
+              <h4 class="text-sm font-bold text-slate-900 leading-snug">Mo‘minov Sanjar Sailqulovich</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-2 pt-2 border-t border-slate-100">
+              Yoshlar masalalari dekan muovini
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+      Muhammad al-Xorazmiy nomidagi Toshkent axborot texnologiyalari universiteti &copy; 2026. Barcha huquqlar himoyalangan.
+    </footer>
+  </div>
+
+  <!-- MODAL: PAROL BILAN TIZIMGA KIRISH OYNASI -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Decorative Top Gradient Bar -->
+      <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-500"></div>
+
+      <!-- Close Button -->
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="p-8">
+        <!-- University & System Badge -->
+        <div class="text-center mb-6 pt-1">
+          <div class="w-14 h-14 rounded-2xl bg-blue-700 flex items-center justify-center text-white mx-auto mb-3 shadow-lg shadow-blue-500/25">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900 tracking-tight">Tizimga kirish</h2>
+          <p class="text-xs text-slate-500 mt-1">Monitoring va Avto-Bayonnoma platformasi</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <!-- Error Alert -->
+          <div id="login-error-alert" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center">
+            <i data-lucide="alert-circle" class="w-4 h-4 mr-2 shrink-0"></i>
+            <span>Login yoki parol noto'g'ri kiritildi!</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1.5">Login / Foydalanuvchi</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="text" id="login-username" required placeholder="admin yoki tyutor"
+                class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1.5">Maxfiy parol</label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+              <input type="password" id="login-password" required placeholder="••••••••"
+                class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-blue-500/20 transition flex items-center justify-center space-x-2 text-sm mt-2">
+            <span>Tasdiqlash va kirish</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <!-- Quick Role Selection (Tezkor kirish tugmalari) -->
+        <div class="mt-6 pt-5 border-t border-slate-100">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-center mb-3">
+            Sinov uchun tezkor rollar:
+          </p>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="quickLogin('admin')" class="p-2.5 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/80 transition text-left">
+              <div class="text-xs font-bold text-blue-900 flex items-center">
+                <i data-lucide="shield" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> Admin
+              </div>
+              <div class="text-[10px] text-blue-600 mt-0.5">To'liq boshqaruv</div>
+            </button>
+
+            <button type="button" onclick="quickLogin('tyutor')" class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/80 transition text-left">
+              <div class="text-xs font-bold text-emerald-900 flex items-center">
+                <i data-lucide="graduation-cap" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> Tyutor
+              </div>
+              <div class="text-[10px] text-emerald-600 mt-0.5">Tadbir kiritish</div>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 text-center mt-3">
+            Standart parol: <code class="font-mono text-slate-600 bg-slate-100 px-1 py-0.5 rounded">12345</code>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. ASOSIY ILOVA (Faqat tizimga kirgan foydalanuvchiga ko'rinadi) -->
+  <div id="app-authenticated" class="min-h-screen flex flex-col hidden">
+
+    <!-- TOP HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center text-white shadow-md">
+              <i data-lucide="award" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <h1 class="text-lg font-bold text-slate-900 leading-tight">TATU Ma'naviyat & Bayonnoma</h1>
+              <p class="text-xs text-slate-500">Toshkent axborot texnologiyalari universiteti monitoring platformasi</p>
+            </div>
+          </div>
+
+          <!-- Role Badge, User Info & Logout -->
+          <div class="flex items-center space-x-3">
+            <button onclick="openNewEventModal()" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Yangi tadbir kiritish</span>
+            </button>
+            
+            <div class="flex items-center pl-3 border-l border-slate-200 space-x-3">
+              <div id="user-header-avatar" class="w-9 h-9 rounded-full bg-blue-100 border border-blue-300 flex items-center justify-center text-blue-700 font-semibold text-sm">
+                MB
+              </div>
+              <div class="hidden md:block text-left">
+                <div id="user-header-name" class="text-sm font-medium text-slate-800">Ma'naviyat bo'limi</div>
+                <div id="user-header-role" class="text-xs text-emerald-600 font-medium">Administrator</div>
+              </div>
+              <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition ml-1" title="Tizimdan chiqish">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8 overflow-x-auto" id="nav-tabs">
+        <button onclick="switchTab('dashboard')" class="nav-tab active flex items-center space-x-2 py-4 border-b-2 border-blue-600 text-blue-600 font-medium text-sm">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard & Tahlil</span>
+        </button>
+        <button onclick="switchTab('events')" class="nav-tab flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium text-sm">
+          <i data-lucide="calendar-check-2" class="w-4 h-4"></i>
+          <span>Tadbirlar monitoringi</span>
+          <span id="tab-events-count" class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+        </button>
+        <button onclick="switchTab('protocols')" class="nav-tab flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium text-sm">
+          <i data-lucide="file-check" class="w-4 h-4"></i>
+          <span>Rasmiylashtirilgan Bayonnomalar</span>
+        </button>
+        <button onclick="switchTab('kpi')" class="nav-tab flex items-center space-x-2 py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium text-sm">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          <span>Fakultetlar KPI reytingi</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="space-y-6">
+      <!-- KPI Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Jami tadbirlar</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1" id="kpi-total-events">0</h3>
+            <span class="text-xs text-emerald-600 font-medium inline-flex items-center mt-1">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1"></i> +12% o'tgan oyga nisbatan
+            </span>
+          </div>
+          <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Ishtirokchilar qamrovi</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1" id="kpi-total-students">0</h3>
+            <span class="text-xs text-slate-500 mt-1 block">Talaba va yoshlar</span>
+          </div>
+          <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Avto-Bayonnomalar</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1" id="kpi-total-protocols">0</h3>
+            <span class="text-xs text-blue-600 font-medium inline-flex items-center mt-1">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1"></i> 100% rasmiylashtirilgan
+            </span>
+          </div>
+          <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+            <i data-lucide="file-text" class="w-6 h-6"></i>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Yillik reja ijrosi</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1">88.4%</h3>
+            <div class="w-28 bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: 88.4%"></div>
+            </div>
+          </div>
+          <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+            <i data-lucide="target" class="w-6 h-6"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts & Visual Analytics Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Faculty Performance Chart -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="font-bold text-slate-900">Fakultetlar bo'yicha tadbirlar monitoringi</h3>
+              <p class="text-xs text-slate-500">O'tkazilgan tadbirlar va ishtirokchilar salmog'i</p>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">2026/2027 o'quv yili</span>
+          </div>
+          <div class="h-64">
+            <canvas id="facultyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Category Doughnut Chart -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-slate-900">Tadbirlar yo'nalishlari</h3>
+            <p class="text-xs text-slate-500 mb-4">Mavzular mutanosibligi</p>
+            <div class="h-52 relative flex items-center justify-center">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+          <div class="text-xs text-center text-slate-500 pt-4 border-t border-slate-100">
+            Barcha tadbirlar davlat ma'naviy-ma'rifiy dasturiga mos keladi
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Recent Events Table in Dashboard -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-slate-900">So'nggi o'tkazilgan tadbirlar</h3>
+            <p class="text-xs text-slate-500">Tezkor monitoring va holat</p>
+          </div>
+          <button onclick="switchTab('events')" class="text-sm font-semibold text-blue-600 hover:text-blue-700 inline-flex items-center">
+            Barchasini ko'rish <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200/80">
+              <tr>
+                <th class="py-3.5 px-5">Tadbir nomi</th>
+                <th class="py-3.5 px-5">Fakultet / Mas'ul</th>
+                <th class="py-3.5 px-5">Sana & Joy</th>
+                <th class="py-3.5 px-5">Ishtirokchilar</th>
+                <th class="py-3.5 px-5">Holati</th>
+                <th class="py-3.5 px-5 text-right">Amal</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-recent-events" class="divide-y divide-slate-100">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. EVENTS MONITORING VIEW -->
+    <section id="view-events" class="space-y-6 hidden">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+        <!-- Search & Filter -->
+        <div class="flex-1 w-full flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+            <input type="text" id="event-search" oninput="filterEvents()" placeholder="Tadbir nomi, spiker yoki fakultet bo'yicha qidiruv..." 
+              class="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <select id="event-category-filter" onchange="filterEvents()" class="text-sm border border-slate-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Barcha yo'nalishlar (3 ta)</option>
+            <option value="Muhim sana">1. Muhim sana</option>
+            <option value="Ma'naviy">2. Ma'naviy</option>
+            <option value="Bo'sh vaqt">3. Bo'sh vaqt</option>
+          </select>
+        </div>
+
+        <button onclick="openNewEventModal()" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Yangi tadbir qo'shish</span>
+        </button>
+      </div>
+
+      <!-- Full Events Grid / Cards -->
+      <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Event Cards dynamically inserted -->
+      </div>
+    </section>
+
+    <!-- 3. PROTOCOLS ARCHIVE VIEW -->
+    <section id="view-protocols" class="space-y-6 hidden">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Elektron Bayonnomalar arxivi</h2>
+          <p class="text-xs text-slate-500">Davlat standarti bo'yicha rasmiylashtirilgan, QR-kodli va tasdiqlangan hujjatlar</p>
+        </div>
+        <span class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-3 py-1.5 rounded-lg border border-emerald-200 flex items-center">
+          <i data-lucide="shield-check" class="w-4 h-4 mr-1.5"></i> Qonuniy rasmiylashtirilgan
+        </span>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <table class="w-full text-left text-sm text-slate-600">
+          <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
+            <tr>
+              <th class="py-3.5 px-5">№ Bayonnoma</th>
+              <th class="py-3.5 px-5">Tadbir / Kun tartibi</th>
+              <th class="py-3.5 px-5">Sana</th>
+              <th class="py-3.5 px-5">Mas'ul & Kengash raisi</th>
+              <th class="py-3.5 px-5">QR Tekshiruv</th>
+              <th class="py-3.5 px-5 text-right">Eksport</th>
+            </tr>
+          </thead>
+          <tbody id="protocols-table-body" class="divide-y divide-slate-100">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. FACULTY KPI RANKING VIEW -->
+    <section id="view-kpi" class="space-y-6 hidden">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900">Fakultetlar va Kafedralar ma'naviyat reytingi (KPI)</h2>
+        <p class="text-xs text-slate-500">O'tkazilgan tadbirlar, talabalar qamrovi va bayonnomalarning o'z vaqtida rasmiylashtirilishi asosida</p>
+
+        <div class="mt-6 space-y-4" id="kpi-ranking-list">
+          <!-- Dynamically populated ranking bars -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: YANGI TADBIR QO'SHISH (FORM) -->
+  <div id="modal-new-event" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+            <i data-lucide="file-plus-2" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 text-lg">Yangi ma'naviy tadbir kiritish</h3>
+        </div>
+        <button onclick="closeNewEventModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="new-event-form" onsubmit="handleEventSubmit(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Tadbir nomi *</label>
+          <input type="text" id="form-title" required placeholder="Masalan: «Kitobxon yoshlar» intellektual davra suhbati"
+            class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Yo'nalishi / Toifasi *</label>
+            <select id="form-category" required class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="Muhim sana">Muhim sana</option>
+              <option value="Ma'naviy">Ma'naviy</option>
+              <option value="Bo'sh vaqt">Bo'sh vaqt</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Fakultet *</label>
+            <select id="form-faculty" required class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="Dasturiy injiniring">Dasturiy injiniring</option>
+              <option value="Kompyuter injiniringi (KIF)">Kompyuter injiniringi (KIF)</option>
+              <option value="Kiberxavfsizlik">Kiberxavfsizlik fakulteti</option>
+              <option value="Telekommunikatsiya texnologiyalari">Telekommunikatsiya texnologiyalari</option>
+              <option value="AKT sohasida iqtisodiyot va menejment">AKT iqtisodiyot va menejment</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">O'tkazilgan sana *</label>
+            <input type="date" id="form-date" required class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">O'tkazilish joyi *</label>
+            <input type="text" id="form-location" required placeholder="Faollar zali / 402-aud."
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Talabalar soni *</label>
+            <input type="number" id="form-attendees" required min="1" placeholder="Masalan: 120"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Mas'ul xodim (F.I.Sh / Tyutor) *</label>
+            <input type="text" id="form-organizer" required placeholder="Masalan: Nigora Sultonova"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Kengash raisi / Dekan muovini *</label>
+            <input type="text" id="form-chairman" required placeholder="Masalan: Dots. A. Karimov"
+              class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">So'zga chiqqanlar va ma'ruza mazmuni *</label>
+          <textarea id="form-speakers" rows="2" required placeholder="Tadbirda so'zga chiqqan spikerlar, ularning asosiy fikrlari va tushuntirishlari..."
+            class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-xs font-semibold uppercase text-slate-600">Qabul qilingan qarorlar (Bayonnoma uchun) *</label>
+            <button type="button" onclick="autoGenerateDecisions()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> AI bilan avto-yozish
+            </button>
+          </div>
+          <textarea id="form-decisions" rows="3" required placeholder="1. Talabalar faolligi ma'qullansin; 2. Keyingi bosqich musobaqasi o'tkazilsin..."
+            class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 flex justify-end space-x-3">
+          <button type="button" onclick="closeNewEventModal()" class="px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            Bekor qilish
+          </button>
+          <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-md transition flex items-center">
+            <i data-lucide="check" class="w-4 h-4 mr-1.5"></i> Saqlash va Avto-Bayonnoma tuzish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RASMIY BAYONNOMA KO'RISH VA PDF CHIQARISH -->
+  <div id="modal-protocol-preview" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl border border-slate-200">
+      
+      <!-- Top Action Bar -->
+      <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-2xl no-print">
+        <div class="flex items-center space-x-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <h3 class="font-bold text-slate-800 text-sm sm:text-base">Rasmiy Bayonnoma shakli (Davlat standarti)</h3>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="downloadProtocolPDF()" class="inline-flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg shadow-sm transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>PDF yuklab olish</span>
+          </button>
+          <button onclick="window.print()" class="inline-flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-lg shadow-sm transition">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Chop etish</span>
+          </button>
+          <button onclick="closeProtocolModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg ml-2">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Protocol Sheet Area (Scrollable in modal, exactly A4 printed) -->
+      <div class="overflow-y-auto p-4 sm:p-8 bg-slate-100 flex-1">
+        <div id="protocol-print-container" class="a4-sheet text-slate-900 text-[13px] leading-relaxed font-serif">
+          
+          <!-- State Header / Emblem / University -->
+          <div class="text-center space-y-1 mb-6 border-b-2 border-slate-900 pb-4">
+            <div class="text-[12px] font-bold uppercase tracking-wider text-slate-800">
+              O'ZBEKISTON RESPUBLIKASI OLIY TA'LIM, FAN VA INNOVATSIYALAR VAZIRLIGI
+            </div>
+            <div class="text-[14px] font-bold uppercase tracking-wide text-blue-900">
+              MUHAMMAD AL-XORAZMIY NOMIDAGI TOSHKENT AXBOROT TEXNOLOGIYALARI UNIVERSITETI
+            </div>
+            <div id="proto-faculty-header" class="text-[12px] font-medium italic text-slate-700">
+              Dasturiy injiniring fakulteti
+            </div>
+          </div>
+
+          <!-- Title and Metadata -->
+          <div class="text-center my-4">
+            <h2 class="text-xl font-bold uppercase tracking-widest text-slate-950 font-sans" id="proto-number">
+              BAYONNOMA № 14
+            </h2>
+            <div class="flex justify-between items-center text-xs font-sans mt-3 px-2 text-slate-700 border-b border-slate-300 pb-2">
+              <div><strong>O'tkazilgan joy:</strong> <span id="proto-location">TATU faollar zali</span></div>
+              <div><strong>Sana:</strong> <span id="proto-date">2026-yil 15-oktabr</span></div>
+            </div>
+          </div>
+
+          <!-- Section 1: Attendees -->
+          <div class="mt-4 space-y-1">
+            <p><strong>Raislik qiluvchi:</strong> <span id="proto-chairman">Dots. A. Karimov</span></p>
+            <p><strong>Kotib / Mas'ul:</strong> <span id="proto-organizer">Nigora Sultonova</span></p>
+            <p><strong>Qatnashdilar:</strong> Fakultet professor-o'qituvchilari, tyutorlar hamda jami <span id="proto-attendees" class="font-bold">120</span> nafar talabalar.</p>
+          </div>
+
+          <!-- Section 2: Agenda -->
+          <div class="mt-5">
+            <h4 class="font-bold uppercase tracking-wide text-xs text-slate-900 border-b border-slate-400 pb-1 mb-2 font-sans">
+              KUN TARTIBI:
+            </h4>
+            <p class="italic pl-4 text-justify" id="proto-agenda">
+              1. «Kelajakka qadam» mavzusidagi yoshlar ma'naviy-ma'rifiy tadbirini o'tkazish to'g'risida.
+            </p>
+          </div>
+
+          <!-- Section 3: Discussion -->
+          <div class="mt-5">
+            <h4 class="font-bold uppercase tracking-wide text-xs text-slate-900 border-b border-slate-400 pb-1 mb-2 font-sans">
+              ESHITILDI:
+            </h4>
+            <div class="text-justify indent-6 space-y-2 text-slate-800" id="proto-speakers">
+              <!-- Content -->
+            </div>
+          </div>
+
+          <!-- Section 4: Decisions -->
+          <div class="mt-5">
+            <h4 class="font-bold uppercase tracking-wide text-xs text-slate-900 border-b border-slate-400 pb-1 mb-2 font-sans">
+              QAROR QILINDI:
+            </h4>
+            <div class="text-justify space-y-1.5 pl-4 text-slate-800" id="proto-decisions">
+              <!-- Content -->
+            </div>
+          </div>
+
+          <!-- Section 5: Verification & Signatures -->
+          <div class="mt-12 pt-6 border-t border-slate-300 flex justify-between items-end">
+            <div class="space-y-4">
+              <div class="flex items-center space-x-12">
+                <span class="w-32 font-bold">Kengash raisi:</span>
+                <span class="border-b border-slate-400 w-36 inline-block"></span>
+                <span id="proto-sig-chairman" class="font-bold">(A. Karimov)</span>
+              </div>
+              <div class="flex items-center space-x-12">
+                <span class="w-32 font-bold">Kotib / Tyutor:</span>
+                <span class="border-b border-slate-400 w-36 inline-block"></span>
+                <span id="proto-sig-organizer" class="font-bold">(N. Sultonova)</span>
+              </div>
+            </div>
+
+            <!-- Digital Seal & QR Code -->
+            <div class="flex flex-col items-center space-y-1">
+              <div id="qrcode" class="p-1.5 bg-white border border-slate-300 rounded shadow-xs"></div>
+              <span class="text-[9px] text-slate-500 font-sans text-center">Elektron tasdiqlangan<br/>ID: <span id="proto-uuid">TATU-2026-9921</span></span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // 0. AUTHENTICATION & ROLES SYSTEM
+    const USERS = {
+      admin: {
+        username: "admin",
+        passwords: ["123", "12345", "admin123"],
+        name: "Ma'naviyat bo'limi",
+        role: "Bosh administrator",
+        roleBadge: "Administrator",
+        faculty: "Barcha fakultetlar",
+        initials: "MB"
+      },
+      tyutor: {
+        username: "tyutor",
+        passwords: ["123", "12345", "tyutor123"],
+        name: "Nigora Sultonova",
+        role: "Dasturiy injiniring tyutori",
+        roleBadge: "Tyutor",
+        faculty: "Dasturiy injiniring",
+        initials: "NS"
+      }
+    };
+
+    let currentUser = JSON.parse(localStorage.getItem('tatu_auth_user')) || null;
+
+    function checkAuth() {
+      const portalScreen = document.getElementById('app-portal-screen');
+      const appScreen = document.getElementById('app-authenticated');
+      const loginModal = document.getElementById('modal-login');
+
+      if (!currentUser) {
+        if (portalScreen) portalScreen.classList.remove('hidden');
+        if (appScreen) appScreen.classList.add('hidden');
+        if (loginModal) loginModal.classList.add('hidden');
+      } else {
+        if (portalScreen) portalScreen.classList.add('hidden');
+        if (loginModal) loginModal.classList.add('hidden');
+        if (appScreen) appScreen.classList.remove('hidden');
+        updateUserHeader();
+      }
+      lucide.createIcons();
+    }
+
+    function openLoginModal() {
+      const modal = document.getElementById('modal-login');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('login-error-alert').classList.add('hidden');
+        setTimeout(() => {
+          document.getElementById('login-username').focus();
+        }, 100);
+      }
+      lucide.createIcons();
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('modal-login');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateUserHeader() {
+      if (!currentUser) return;
+      document.getElementById('user-header-name').innerText = currentUser.name;
+      document.getElementById('user-header-role').innerText = currentUser.roleBadge;
+      document.getElementById('user-header-avatar').innerText = currentUser.initials;
+
+      // If tutor, lock faculty in new event modal
+      const facultySelect = document.getElementById('form-faculty');
+      const organizerInput = document.getElementById('form-organizer');
+      if (currentUser.roleBadge === 'Tyutor') {
+        facultySelect.value = currentUser.faculty;
+        organizerInput.value = `${currentUser.name} (Tyutor)`;
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim().toLowerCase();
+      const p = document.getElementById('login-password').value.trim();
+      const errorAlert = document.getElementById('login-error-alert');
+
+      if (USERS[u] && USERS[u].passwords.includes(p)) {
+        currentUser = USERS[u];
+        localStorage.setItem('tatu_auth_user', JSON.stringify(currentUser));
+        errorAlert.classList.add('hidden');
+        checkAuth();
+        saveEvents();
+        renderCharts();
+      } else {
+        errorAlert.classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function quickLogin(role) {
+      if (USERS[role]) {
+        currentUser = USERS[role];
+        localStorage.setItem('tatu_auth_user', JSON.stringify(currentUser));
+        checkAuth();
+        saveEvents();
+        renderCharts();
+      }
+    }
+
+    function handleLogout() {
+      if (confirm("Haqiqatan ham tizimdan chiqmoqchimisiz?")) {
+        localStorage.removeItem('tatu_auth_user');
+        currentUser = null;
+        checkAuth();
+      }
+    }
+    // Initial State & Realistic Pre-loaded Events Data
+    const INITIAL_EVENTS = [
+      {
+        id: "TATU-EV-101",
+        protocolNumber: 12,
+        title: "«Kitobxonlik haftaligi» doirasida adabiy kecha",
+        category: "Ma'naviy",
+        faculty: "Dasturiy injiniring",
+        date: "2026-10-18",
+        location: "Universitet Axborot-resurs markazi (ARM)",
+        attendees: 145,
+        organizer: "Nigora Sultonova (Tyutor)",
+        chairman: "Dots. A. Karimov (Dekan muovini)",
+        speakers: "Tadbirda fakultet tyutori N. Sultonova so'zga chiqib, talabalar o'rtasida mutolaa madaniyatini oshirish va yangi nashr etilgan adabiyotlar bilan tanishtirish muhimligini ta'kidladi. Talabalardan Sh. Bekzodov va D. Murodova badiiy asarlar tahlili bo'yicha o'z taqdimotlarini namoyish etdilar.",
+        decisions: "1. Fakultet talabalari o'rtasida haftalik kitobxonlik tanlovi yakunlari bo'yicha g'oliblar rag'batlantirilsin;\n2. Yoshlar ittifoqi yetakchilari bilan hamkorlikda har chorshanba 'Kitob ulash' aksiyasi tashkil etilsin;\n3. Ijro nazorati ma'naviyat bo'limi mas'uli zimmasiga yuklatilsin.",
+        status: "Tasdiqlangan"
+      },
+      {
+        id: "TATU-EV-102",
+        protocolNumber: 13,
+        title: "«O'zbekiston Respublikasi Davlat bayrog'i qabul qilingan kun» tantanasi",
+        category: "Muhim sana",
+        faculty: "Kiberxavfsizlik",
+        date: "2026-10-22",
+        location: "Katta anjumanlar zali",
+        attendees: 230,
+        organizer: "Javohir Olimov",
+        chairman: "Prof. O. Xasanov",
+        speakers: "Tadbirda davlat ramzlari va muhim sanalarning yoshlar tarbiyasidagi o'rni haqida ma'ruzalar qilindi.",
+        decisions: "1. Barcha guruhlarda muhim sana munosabati bilan ma'naviyat soatlari o'tkazilsin;\n2. Talabalar yotoqxonasida madaniy tadbirlar tashkil etilsin.",
+        status: "Tasdiqlangan"
+      },
+      {
+        id: "TATU-EV-103",
+        protocolNumber: 14,
+        title: "«Zakovat» intellektual turniri va sport musobaqalari",
+        category: "Bo'sh vaqt",
+        faculty: "Kompyuter injiniringi (KIF)",
+        date: "2026-10-25",
+        location: "3-bino faollar zali",
+        attendees: 180,
+        organizer: "Sardor Yusupov",
+        chairman: "Dots. B. Ergashev",
+        speakers: "Talabalarning darsdan bo'sh vaqtlarini mazmunli tashkil etish, to'garaklar va sport seksiyalari faoliyatini kengaytirish masalalari muhokama qilindi.",
+        decisions: "1. Fakultetlararo intellektual o'yinlar ligasi start olsin;\n2. Bo'sh vaqtlarda to'garaklar faolligi oshirilsin.",
+        status: "Tasdiqlangan"
+      }
+    ];
+
+    // LocalStorage manager & Category migration
+    let rawEvents = JSON.parse(localStorage.getItem('tatu_manaviyat_events'));
+    let events = (rawEvents && rawEvents.length > 0) ? rawEvents : INITIAL_EVENTS;
+
+    // Normalize any legacy categories to exactly the 3 chosen:
+    events = events.map(e => {
+      if (!['Muhim sana', "Ma'naviy", "Bo'sh vaqt"].includes(e.category)) {
+        if (e.category === 'Kitobxonlik') e.category = "Ma'naviy";
+        else if (e.category === 'Huquqbuzarlik profilaktikasi') e.category = "Muhim sana";
+        else e.category = "Bo'sh vaqt";
+      }
+      return e;
+    });
+
+    function saveEvents() {
+      localStorage.setItem('tatu_manaviyat_events', JSON.stringify(events));
+      renderDashboard();
+      renderEventsList();
+      renderProtocolsList();
+      renderKPIRankings();
+    }
+
+    // Tab switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('section[id^="view-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById('view-' + tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('active', 'border-blue-600', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-slate-500');
+      });
+
+      const activeBtn = event ? event.currentTarget : document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'border-blue-600', 'text-blue-600');
+        activeBtn.classList.remove('border-transparent', 'text-slate-500');
+      }
+
+      if (tabId === 'dashboard') {
+        renderCharts();
+      }
+      lucide.createIcons();
+    }
+
+    // Render Dashboard KPIs & Tables
+    function renderDashboard() {
+      document.getElementById('kpi-total-events').innerText = events.length;
+      const totalStudents = events.reduce((sum, e) => sum + Number(e.attendees || 0), 0);
+      document.getElementById('kpi-total-students').innerText = totalStudents.toLocaleString();
+      document.getElementById('kpi-total-protocols').innerText = events.length;
+      document.getElementById('tab-events-count').innerText = events.length;
+
+      const recentContainer = document.getElementById('dashboard-recent-events');
+      recentContainer.innerHTML = '';
+
+      events.slice(0, 5).forEach(e => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3.5 px-5 font-medium text-slate-900">${e.title}</td>
+          <td class="py-3.5 px-5"><div class="font-medium text-slate-800">${e.faculty}</div><div class="text-xs text-slate-400">${e.organizer}</div></td>
+          <td class="py-3.5 px-5"><div class="text-slate-700 font-medium">${e.date}</div><div class="text-xs text-slate-400">${e.location}</div></td>
+          <td class="py-3.5 px-5 font-semibold text-slate-800">${e.attendees} nafar</td>
+          <td class="py-3.5 px-5">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+              ${e.status}
+            </span>
+          </td>
+          <td class="py-3.5 px-5 text-right">
+            <button onclick="viewProtocol('${e.id}')" class="text-blue-600 hover:text-blue-800 font-semibold text-xs inline-flex items-center">
+              <i data-lucide="file-text" class="w-4 h-4 mr-1"></i> Bayonnoma
+            </button>
+          </td>
+        `;
+        recentContainer.appendChild(tr);
+      });
+      lucide.createIcons();
+    }
+
+    // Render Events List (Cards)
+    function renderEventsList(items = events) {
+      const grid = document.getElementById('events-grid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">Hech qanday tadbir topilmadi.</div>`;
+        return;
+      }
+
+      items.forEach(e => {
+        const badgeStyle = e.category === 'Muhim sana' ? 'bg-rose-50 text-rose-700 border border-rose-200' :
+                           e.category === "Ma'naviy" ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                           'bg-emerald-50 text-emerald-700 border border-emerald-200';
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-3">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${badgeStyle}">
+                ${e.category}
+              </span>
+              <span class="text-xs text-slate-400 flex items-center">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1"></i> ${e.date}
+              </span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-base leading-snug mb-2">${e.title}</h4>
+            <div class="space-y-1.5 text-xs text-slate-600 mb-4">
+              <p class="flex items-center"><i data-lucide="building-2" class="w-4 h-4 mr-2 text-slate-400"></i> ${e.faculty}</p>
+              <p class="flex items-center"><i data-lucide="map-pin" class="w-4 h-4 mr-2 text-slate-400"></i> ${e.location}</p>
+              <p class="flex items-center"><i data-lucide="user-check" class="w-4 h-4 mr-2 text-slate-400"></i> Mas'ul: ${e.organizer}</p>
+              <p class="flex items-center font-semibold text-slate-800"><i data-lucide="users" class="w-4 h-4 mr-2 text-slate-400"></i> ${e.attendees} nafar ishtirokchi</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700">№ ${e.protocolNumber}-sonli bayonnoma</span>
+            <button onclick="viewProtocol('${e.id}')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition inline-flex items-center">
+              <i data-lucide="printer" class="w-3.5 h-3.5 mr-1.5"></i> Bayonnomani ko'rish
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // Filter Events
+    function filterEvents() {
+      const q = document.getElementById('event-search').value.toLowerCase();
+      const cat = document.getElementById('event-category-filter').value;
+
+      const filtered = events.filter(e => {
+        const matchesQuery = e.title.toLowerCase().includes(q) || 
+                             e.faculty.toLowerCase().includes(q) || 
+                             e.organizer.toLowerCase().includes(q);
+        const matchesCat = !cat || e.category === cat;
+        return matchesQuery && matchesCat;
+      });
+
+      renderEventsList(filtered);
+    }
+
+    // Render Protocols Table
+    function renderProtocolsList() {
+      const tbody = document.getElementById('protocols-table-body');
+      tbody.innerHTML = '';
+
+      events.forEach(e => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3.5 px-5 font-bold text-blue-700">№ ${e.protocolNumber} / 2026</td>
+          <td class="py-3.5 px-5">
+            <div class="font-medium text-slate-900">${e.title}</div>
+            <div class="text-xs text-slate-400">${e.faculty}</div>
+          </td>
+          <td class="py-3.5 px-5 text-slate-700">${e.date}</td>
+          <td class="py-3.5 px-5">
+            <div class="text-slate-800">${e.chairman}</div>
+            <div class="text-xs text-slate-400">${e.organizer}</div>
+          </td>
+          <td class="py-3.5 px-5">
+            <span class="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-600">${e.id}</span>
+          </td>
+          <td class="py-3.5 px-5 text-right space-x-2">
+            <button onclick="viewProtocol('${e.id}')" class="text-xs bg-blue-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-700 transition inline-flex items-center">
+              <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i> Ko'rish / Yuklab olish
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons();
+    }
+
+    // Render KPI Ranking
+    function renderKPIRankings() {
+      const faculties = [
+        { name: "Dasturiy injiniring", target: 40 },
+        { name: "Kiberxavfsizlik", target: 35 },
+        { name: "Kompyuter injiniringi (KIF)", target: 38 },
+        { name: "Telekommunikatsiya texnologiyalari", target: 30 },
+        { name: "AKT sohasida iqtisodiyot va menejment", target: 25 }
+      ];
+
+      const facultyCounts = {};
+      events.forEach(e => {
+        facultyCounts[e.faculty] = (facultyCounts[e.faculty] || 0) + 1;
+      });
+
+      faculties.forEach(f => {
+        f.done = facultyCounts[f.name] || 0;
+        f.percentage = Math.min(100, Math.round((f.done / f.target) * 100));
+      });
+
+      faculties.sort((a, b) => b.done - a.done);
+
+      const listContainer = document.getElementById('kpi-ranking-list');
+      listContainer.innerHTML = '';
+
+      faculties.forEach((f, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-4 rounded-xl border border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between sm:items-center gap-3";
+        div.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-lg font-bold flex items-center justify-center text-sm ${idx === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}">
+              #${idx + 1}
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm">${f.name}</h4>
+              <p class="text-xs text-slate-500">Reja: ${f.target} ta | O'tkazildi: ${f.done} ta tadbir</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${f.percentage}%"></div>
+            </div>
+            <span class="text-sm font-bold text-slate-800 w-12 text-right">${f.percentage}%</span>
+          </div>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    // View Protocol Modal & Populate Data
+    let currentViewingEvent = null;
+
+    function viewProtocol(eventId) {
+      const e = events.find(x => x.id === eventId);
+      if (!e) return;
+      currentViewingEvent = e;
+
+      document.getElementById('proto-faculty-header').innerText = e.faculty + " fakulteti";
+      document.getElementById('proto-number').innerText = `BAYONNOMA № ${e.protocolNumber}`;
+      document.getElementById('proto-location').innerText = e.location;
+      document.getElementById('proto-date').innerText = e.date + "-yil";
+      document.getElementById('proto-chairman').innerText = e.chairman;
+      document.getElementById('proto-organizer').innerText = e.organizer;
+      document.getElementById('proto-attendees').innerText = e.attendees;
+      document.getElementById('proto-agenda').innerText = `1. «${e.title}» to'g'risida.`;
+      
+      // Format speakers
+      const speakersEl = document.getElementById('proto-speakers');
+      speakersEl.innerHTML = `<p>${e.speakers.replace(/\n/g, '</p><p class="mt-2">')}</p>`;
+
+      // Format decisions
+      const decisionsEl = document.getElementById('proto-decisions');
+      const lines = e.decisions.split('\n');
+      decisionsEl.innerHTML = lines.map(line => `<p>${line}</p>`).join('');
+
+      document.getElementById('proto-sig-chairman').innerText = `(${e.chairman})`;
+      document.getElementById('proto-sig-organizer').innerText = `(${e.organizer})`;
+      document.getElementById('proto-uuid').innerText = e.id;
+
+      // Generate dynamic QR Code for authenticity verification
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: `https://manaviyat.tuit.uz/verify?protocol=${e.id}&date=${e.date}&approved=true`,
+        width: 72,
+        height: 72,
+        colorDark: "#0f172a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      document.getElementById('modal-protocol-preview').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeProtocolModal() {
+      document.getElementById('modal-protocol-preview').classList.add('hidden');
+    }
+
+    // Download PDF directly using html2pdf
+    function downloadProtocolPDF() {
+      if (!currentViewingEvent) return;
+      const element = document.getElementById('protocol-print-container');
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: `TATU_Bayonnoma_${currentViewingEvent.protocolNumber}_${currentViewingEvent.date}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    // Modal Add Event
+    function openNewEventModal() {
+      document.getElementById('modal-new-event').classList.remove('hidden');
+      document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+      lucide.createIcons();
+    }
+
+    function closeNewEventModal() {
+      document.getElementById('modal-new-event').classList.add('hidden');
+      document.getElementById('new-event-form').reset();
+    }
+
+    // AI Decision helper simulation
+    function autoGenerateDecisions() {
+      const title = document.getElementById('form-title').value;
+      if (!title) {
+        alert("Iltimos, avval tadbir nomini kiriting!");
+        return;
+      }
+      const generated = `1. «${title}» doirasida bildirilgan takliflar va talabalar tashabbusi ma'qullansin;\n2. Tadbir yakunlari bo'yicha faol ishtirok etgan talabalarga fakultet ma'muriyatining tashakkurnomalari topshirilsin;\n3. Kelgusi bosqich tadbirlarini rejalashtirish mas'ul tyutor zimmasiga yuklatilsin.`;
+      document.getElementById('form-decisions').value = generated;
+    }
+
+    // Form Submit Handler
+    function handleEventSubmit(e) {
+      e.preventDefault();
+      const newProtocolNum = events.length + 12;
+      const newId = `TATU-EV-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const newEvent = {
+        id: newId,
+        protocolNumber: newProtocolNum,
+        title: document.getElementById('form-title').value,
+        category: document.getElementById('form-category').value,
+        faculty: document.getElementById('form-faculty').value,
+        date: document.getElementById('form-date').value,
+        location: document.getElementById('form-location').value,
+        attendees: Number(document.getElementById('form-attendees').value),
+        organizer: document.getElementById('form-organizer').value,
+        chairman: document.getElementById('form-chairman').value,
+        speakers: document.getElementById('form-speakers').value,
+        decisions: document.getElementById('form-decisions').value,
+        status: "Tasdiqlangan"
+      };
+
+      events.unshift(newEvent);
+      saveEvents();
+      closeNewEventModal();
+      
+      // Auto open generated protocol immediately!
+      viewProtocol(newEvent.id);
+    }
+
+    // Chart.js Visualizations
+    let facultyChart = null;
+    let categoryChart = null;
+
+    function renderCharts() {
+      if (facultyChart) facultyChart.destroy();
+      if (categoryChart) categoryChart.destroy();
+
+      // Faculty bar chart
+      const ctx1 = document.getElementById('facultyChart').getContext('2d');
+      facultyChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['Dasturiy inj.', 'Kiberxavfsizlik', 'KIF', 'Telekom', 'AKT menejment'],
+          datasets: [{
+            label: "O'tkazilgan tadbirlar",
+            data: [12, 9, 14, 7, 5],
+            backgroundColor: '#2563eb',
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Category Doughnut (exactly 3 categories: Muhim sana, Ma'naviy, Bo'sh vaqt)
+      const countMuhim = events.filter(e => e.category === 'Muhim sana').length;
+      const countManaviy = events.filter(e => e.category === "Ma'naviy").length;
+      const countBoshVaqt = events.filter(e => e.category === "Bo'sh vaqt").length;
+
+      const ctx2 = document.getElementById('categoryChart').getContext('2d');
+      categoryChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Muhim sana', "Ma'naviy", "Bo'sh vaqt"],
+          datasets: [{
+            data: [countMuhim, countManaviy, countBoshVaqt],
+            backgroundColor: ['#f43f5e', '#3b82f6', '#10b981'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    // Initialization on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      if (currentUser) {
+        saveEvents();
+        renderCharts();
+      }
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
